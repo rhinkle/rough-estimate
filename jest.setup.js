@@ -17,40 +17,7 @@ jest.mock('next/navigation', () => ({
   usePathname: () => '/',
 }))
 
-// Mock Prisma client for tests
-jest.mock('@/lib/db', () => ({
-  db: {
-    taskType: {
-      findMany: jest.fn(),
-      findUnique: jest.fn(),
-      create: jest.fn(),
-      update: jest.fn(),
-      delete: jest.fn(),
-    },
-    project: {
-      findMany: jest.fn(),
-      findUnique: jest.fn(),
-      create: jest.fn(),
-      update: jest.fn(),
-      delete: jest.fn(),
-    },
-    projectTask: {
-      findMany: jest.fn(),
-      findUnique: jest.fn(),
-      create: jest.fn(),
-      update: jest.fn(),
-      delete: jest.fn(),
-      upsert: jest.fn(),
-    },
-    configuration: {
-      findMany: jest.fn(),
-      findUnique: jest.fn(),
-      upsert: jest.fn(),
-    },
-    $queryRaw: jest.fn(),
-    $disconnect: jest.fn(),
-  },
-}))
+// Note: Database mocking will be handled per test file as needed
 
 // Global test cleanup
 afterEach(() => {
