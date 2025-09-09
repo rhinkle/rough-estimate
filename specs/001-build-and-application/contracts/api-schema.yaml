@@ -1,0 +1,827 @@
+openapi: 3.0.3
+info:
+  title: Project Estimation API
+  description: API for managing project time estimates and task configurations
+  version: 1.0.0
+  contact:
+    name: Project Estimation App
+  license:
+    name: MIT
+
+servers:
+  - url: http://localhost:3000/api
+    description: Development server
+  - url: https://estimation-app.vercel.app/api
+    description: Production server
+
+paths:
+  /task-types:
+    get:
+      summary: List all task types
+      description: Retrieve all task types available for project estimation
+      parameters:
+        - name: category
+          in: query
+          description: Filter by task category
+          required: false
+          schema:
+            type: string
+        - name: active
+          in: query
+          description: Filter by active status
+          required: false
+          schema:
+            type: boolean
+            default: true
+      responses:
+        '200':
+          description: List of task types
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TaskType'
+        '500':
+          $ref: '#/components/responses/ServerError'
+    
+    post:
+      summary: Create new task type
+      description: Create a new task type for project estimation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTaskTypeRequest'
+      responses:
+        '201':
+          description: Task type created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskType'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+  /task-types/{id}:
+    get:
+      summary: Get task type by ID
+      parameters:
+        - $ref: '#/components/parameters/TaskTypeId'
+      responses:
+        '200':
+          description: Task type details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskType'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/ServerError'
+    
+    put:
+      summary: Update task type
+      parameters:
+        - $ref: '#/components/parameters/TaskTypeId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateTaskTypeRequest'
+      responses:
+        '200':
+          description: Task type updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskType'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/ServerError'
+    
+    delete:
+      summary: Delete task type
+      parameters:
+        - $ref: '#/components/parameters/TaskTypeId'
+      responses:
+        '204':
+          description: Task type deleted successfully
+        '400':
+          description: Cannot delete task type in use
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+  /projects:
+    get:
+      summary: List all projects
+      description: Retrieve all projects with optional filtering
+      parameters:
+        - name: status
+          in: query
+          description: Filter by project status
+          required: false
+          schema:
+            $ref: '#/components/schemas/ProjectStatus'
+        - name: limit
+          in: query
+          description: Maximum number of projects to return
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+        - name: offset
+          in: query
+          description: Number of projects to skip
+          required: false
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+      responses:
+        '200':
+          description: List of projects
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Project'
+                  total:
+                    type: integer
+                  hasMore:
+                    type: boolean
+        '500':
+          $ref: '#/components/responses/ServerError'
+    
+    post:
+      summary: Create new project
+      description: Create a new project for estimation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateProjectRequest'
+      responses:
+        '201':
+          description: Project created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+  /projects/{id}:
+    get:
+      summary: Get project by ID
+      parameters:
+        - $ref: '#/components/parameters/ProjectId'
+      responses:
+        '200':
+          description: Project details with tasks
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectWithTasks'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/ServerError'
+    
+    put:
+      summary: Update project
+      parameters:
+        - $ref: '#/components/parameters/ProjectId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateProjectRequest'
+      responses:
+        '200':
+          description: Project updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/ServerError'
+    
+    delete:
+      summary: Delete project
+      parameters:
+        - $ref: '#/components/parameters/ProjectId'
+      responses:
+        '204':
+          description: Project deleted successfully
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+  /projects/{id}/tasks:
+    get:
+      summary: Get project tasks
+      parameters:
+        - $ref: '#/components/parameters/ProjectId'
+      responses:
+        '200':
+          description: List of project tasks
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProjectTask'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/ServerError'
+    
+    post:
+      summary: Add task to project
+      parameters:
+        - $ref: '#/components/parameters/ProjectId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateProjectTaskRequest'
+      responses:
+        '201':
+          description: Task added to project successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectTask'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+  /projects/{id}/tasks/{taskId}:
+    put:
+      summary: Update project task
+      parameters:
+        - $ref: '#/components/parameters/ProjectId'
+        - name: taskId
+          in: path
+          required: true
+          description: Project task ID
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateProjectTaskRequest'
+      responses:
+        '200':
+          description: Project task updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectTask'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/ServerError'
+    
+    delete:
+      summary: Remove task from project
+      parameters:
+        - $ref: '#/components/parameters/ProjectId'
+        - name: taskId
+          in: path
+          required: true
+          description: Project task ID
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Task removed from project successfully
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+  /projects/{id}/estimate:
+    get:
+      summary: Get project time estimate
+      description: Calculate and return the total time estimate for a project
+      parameters:
+        - $ref: '#/components/parameters/ProjectId'
+      responses:
+        '200':
+          description: Project time estimate
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectEstimate'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+  /health:
+    get:
+      summary: Health check endpoint
+      description: Check API and database health
+      responses:
+        '200':
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: healthy
+                  timestamp:
+                    type: string
+                    format: date-time
+                  database:
+                    type: string
+                    example: healthy
+        '503':
+          description: Service is unhealthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: unhealthy
+                  timestamp:
+                    type: string
+                    format: date-time
+                  database:
+                    type: string
+                    example: unhealthy
+
+components:
+  parameters:
+    TaskTypeId:
+      name: id
+      in: path
+      required: true
+      description: Task type ID
+      schema:
+        type: string
+    
+    ProjectId:
+      name: id
+      in: path
+      required: true
+      description: Project ID
+      schema:
+        type: string
+
+  schemas:
+    TaskType:
+      type: object
+      required:
+        - id
+        - name
+        - defaultMinHours
+        - defaultMaxHours
+        - isActive
+        - createdAt
+        - updatedAt
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the task type
+        name:
+          type: string
+          description: Display name of the task type
+          example: "Large Complex Web Screen"
+        description:
+          type: string
+          nullable: true
+          description: Detailed description of the task type
+          example: "Complex UI with multiple interactions and data visualization"
+        defaultMinHours:
+          type: number
+          format: float
+          minimum: 0.1
+          description: Default minimum hours for this task type
+          example: 8.0
+        defaultMaxHours:
+          type: number
+          format: float
+          minimum: 0.1
+          description: Default maximum hours for this task type
+          example: 16.0
+        category:
+          type: string
+          nullable: true
+          description: Task category for grouping
+          example: "Frontend"
+        isActive:
+          type: boolean
+          description: Whether this task type is available for selection
+          example: true
+        createdAt:
+          type: string
+          format: date-time
+          description: When the task type was created
+        updatedAt:
+          type: string
+          format: date-time
+          description: When the task type was last updated
+
+    CreateTaskTypeRequest:
+      type: object
+      required:
+        - name
+        - defaultMinHours
+        - defaultMaxHours
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+          description: Display name of the task type
+        description:
+          type: string
+          maxLength: 500
+          description: Detailed description of the task type
+        defaultMinHours:
+          type: number
+          format: float
+          minimum: 0.1
+          maximum: 1000
+          description: Default minimum hours for this task type
+        defaultMaxHours:
+          type: number
+          format: float
+          minimum: 0.1
+          maximum: 1000
+          description: Default maximum hours for this task type
+        category:
+          type: string
+          maxLength: 50
+          description: Task category for grouping
+
+    UpdateTaskTypeRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+          description: Display name of the task type
+        description:
+          type: string
+          maxLength: 500
+          description: Detailed description of the task type
+        defaultMinHours:
+          type: number
+          format: float
+          minimum: 0.1
+          maximum: 1000
+          description: Default minimum hours for this task type
+        defaultMaxHours:
+          type: number
+          format: float
+          minimum: 0.1
+          maximum: 1000
+          description: Default maximum hours for this task type
+        category:
+          type: string
+          maxLength: 50
+          description: Task category for grouping
+        isActive:
+          type: boolean
+          description: Whether this task type is available for selection
+
+    Project:
+      type: object
+      required:
+        - id
+        - name
+        - status
+        - totalMinHours
+        - totalMaxHours
+        - createdAt
+        - updatedAt
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the project
+        name:
+          type: string
+          description: Project name
+          example: "E-commerce Website"
+        description:
+          type: string
+          nullable: true
+          description: Project description
+          example: "Full-featured online store with payment processing"
+        status:
+          $ref: '#/components/schemas/ProjectStatus'
+        totalMinHours:
+          type: number
+          format: float
+          description: Calculated minimum total hours
+          example: 120.0
+        totalMaxHours:
+          type: number
+          format: float
+          description: Calculated maximum total hours
+          example: 240.0
+        createdAt:
+          type: string
+          format: date-time
+          description: When the project was created
+        updatedAt:
+          type: string
+          format: date-time
+          description: When the project was last updated
+
+    ProjectWithTasks:
+      allOf:
+        - $ref: '#/components/schemas/Project'
+        - type: object
+          properties:
+            tasks:
+              type: array
+              items:
+                $ref: '#/components/schemas/ProjectTask'
+
+    CreateProjectRequest:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+          description: Project name
+        description:
+          type: string
+          maxLength: 1000
+          description: Project description
+
+    UpdateProjectRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+          description: Project name
+        description:
+          type: string
+          maxLength: 1000
+          description: Project description
+        status:
+          $ref: '#/components/schemas/ProjectStatus'
+
+    ProjectTask:
+      type: object
+      required:
+        - id
+        - projectId
+        - taskTypeId
+        - quantity
+        - createdAt
+        - updatedAt
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the project task
+        projectId:
+          type: string
+          description: ID of the associated project
+        taskTypeId:
+          type: string
+          description: ID of the associated task type
+        quantity:
+          type: integer
+          minimum: 0
+          description: Number of instances of this task type
+          example: 3
+        customMinHours:
+          type: number
+          format: float
+          nullable: true
+          minimum: 0.1
+          description: Custom minimum hours override
+        customMaxHours:
+          type: number
+          format: float
+          nullable: true
+          minimum: 0.1
+          description: Custom maximum hours override
+        createdAt:
+          type: string
+          format: date-time
+          description: When the project task was created
+        updatedAt:
+          type: string
+          format: date-time
+          description: When the project task was last updated
+        taskType:
+          $ref: '#/components/schemas/TaskType'
+
+    CreateProjectTaskRequest:
+      type: object
+      required:
+        - taskTypeId
+        - quantity
+      properties:
+        taskTypeId:
+          type: string
+          description: ID of the task type to add
+        quantity:
+          type: integer
+          minimum: 1
+          description: Number of instances of this task type
+        customMinHours:
+          type: number
+          format: float
+          minimum: 0.1
+          description: Custom minimum hours override
+        customMaxHours:
+          type: number
+          format: float
+          minimum: 0.1
+          description: Custom maximum hours override
+
+    UpdateProjectTaskRequest:
+      type: object
+      properties:
+        quantity:
+          type: integer
+          minimum: 0
+          description: Number of instances of this task type
+        customMinHours:
+          type: number
+          format: float
+          nullable: true
+          minimum: 0.1
+          description: Custom minimum hours override
+        customMaxHours:
+          type: number
+          format: float
+          nullable: true
+          minimum: 0.1
+          description: Custom maximum hours override
+
+    ProjectEstimate:
+      type: object
+      required:
+        - projectId
+        - totalMinHours
+        - totalMaxHours
+        - taskBreakdown
+        - calculatedAt
+      properties:
+        projectId:
+          type: string
+          description: ID of the project
+        totalMinHours:
+          type: number
+          format: float
+          description: Total minimum hours for the project
+          example: 120.0
+        totalMaxHours:
+          type: number
+          format: float
+          description: Total maximum hours for the project
+          example: 240.0
+        taskBreakdown:
+          type: array
+          description: Breakdown of hours by task type
+          items:
+            type: object
+            properties:
+              taskTypeId:
+                type: string
+              taskTypeName:
+                type: string
+              quantity:
+                type: integer
+              minHours:
+                type: number
+                format: float
+              maxHours:
+                type: number
+                format: float
+              subtotalMinHours:
+                type: number
+                format: float
+              subtotalMaxHours:
+                type: number
+                format: float
+        calculatedAt:
+          type: string
+          format: date-time
+          description: When the estimate was calculated
+
+    ProjectStatus:
+      type: string
+      enum:
+        - DRAFT
+        - ACTIVE
+        - COMPLETED
+        - ARCHIVED
+      description: Current status of the project
+
+    Error:
+      type: object
+      required:
+        - error
+        - timestamp
+      properties:
+        error:
+          type: string
+          description: Error message
+        details:
+          type: array
+          description: Detailed error information
+          items:
+            type: object
+            properties:
+              field:
+                type: string
+              message:
+                type: string
+        timestamp:
+          type: string
+          format: date-time
+          description: When the error occurred
+
+  responses:
+    ValidationError:
+      description: Validation error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: "Invalid input"
+            details:
+              - field: "name"
+                message: "Name is required"
+              - field: "defaultMaxHours"
+                message: "Must be greater than defaultMinHours"
+            timestamp: "2025-09-09T10:00:00Z"
+
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: "Resource not found"
+            timestamp: "2025-09-09T10:00:00Z"
+
+    ServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: "Internal server error"
+            timestamp: "2025-09-09T10:00:00Z"

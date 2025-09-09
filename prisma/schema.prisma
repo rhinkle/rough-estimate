@@ -1,0 +1,70 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model TaskType {
+  id              String @id @default(cuid())
+  name            String @unique
+  description     String?
+  defaultMinHours Float
+  defaultMaxHours Float
+  category        String?
+  isActive        Boolean @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  projectTasks    ProjectTask[]
+  
+  @@map("task_types")
+}
+
+model Project {
+  id            String   @id @default(cuid())
+  name          String
+  description   String?
+  status        String   @default("DRAFT")
+  totalMinHours Float    @default(0)
+  totalMaxHours Float    @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  tasks         ProjectTask[]
+  
+  @@map("projects")
+}
+
+model ProjectTask {
+  id             String   @id @default(cuid())
+  projectId      String
+  taskTypeId     String
+  quantity       Int
+  customMinHours Float?
+  customMaxHours Float?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  
+  project        Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  taskType       TaskType @relation(fields: [taskTypeId], references: [id])
+  
+  @@unique([projectId, taskTypeId])
+  @@map("project_tasks")
+}
+
+model Configuration {
+  id          String   @id @default(cuid())
+  key         String   @unique
+  value       String
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@map("configurations")
+}
