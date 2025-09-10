@@ -90,10 +90,10 @@
 
 ## Phase 3.4: Integration & Error Handling
 
-- [ ] **T041** Input validation with Zod schemas in `src/lib/validations.ts`
+- [x] **T041** Input validation with Zod schemas in `src/lib/validations.ts`
 - [x] **T042** Error boundaries and global error handling in `src/components/error-boundary.tsx`
-- [ ] **T043** API error responses and logging middleware
-- [ ] **T044** Database transaction handling and connection pooling
+- [x] **T043** API error responses and logging middleware
+- [x] **T044** Database transaction handling and connection pooling
 - [x] **T045** Server Actions for form submissions and optimistic updates
 
 ## Phase 3.5: Polish & Performance
