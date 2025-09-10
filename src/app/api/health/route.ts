@@ -4,7 +4,7 @@ import { checkDatabaseConnection } from '@/lib/db'
 export async function GET() {
   try {
     const dbHealth = await checkDatabaseConnection()
-    
+
     const healthStatus = {
       status: dbHealth.status === 'healthy' ? 'healthy' : 'unhealthy',
       timestamp: new Date().toISOString(),

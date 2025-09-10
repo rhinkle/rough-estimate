@@ -1,6 +1,5 @@
 /**
  * Contract Test: GET /api/health
- * 
  * CRITICAL: This test MUST FAIL until the API route is implemented.
  * Tests the API contract as specified in contracts/api-schema.yaml
  */
@@ -11,12 +10,7 @@ import { createMockRequest, extractResponseData } from './utils'
 describe('GET /api/health', () => {
   describe('Contract Compliance', () => {
     it('should return 200 with healthy status when service is operational', async () => {
-      const request = createMockRequest({
-        method: 'GET',
-        url: 'http://localhost:3000/api/health',
-      })
-
-      const response = await GET(request)
+      const response = await GET()
       const result = await extractResponseData(response)
 
       expect(result.status).toBe(200)
@@ -28,7 +22,7 @@ describe('GET /api/health', () => {
 
       // Timestamp should be valid ISO string
       expect(() => new Date(result.data.timestamp)).not.toThrow()
-      
+
       // Should be very recent
       const timestampTime = new Date(result.data.timestamp).getTime()
       const now = Date.now()
@@ -38,13 +32,9 @@ describe('GET /api/health', () => {
     it('should return 503 with unhealthy status when database is unavailable', async () => {
       // This test simulates database failure
       // In actual implementation, this would be triggered by database connectivity issues
-      const request = createMockRequest({
-        method: 'GET',
-        url: 'http://localhost:3000/api/health',
-      })
 
       // For testing purposes, we expect this to either work (200) or fail gracefully (503)
-      const response = await GET(request)
+      const response = await GET()
       const result = await extractResponseData(response)
 
       if (result.status === 503) {
@@ -63,37 +53,23 @@ describe('GET /api/health', () => {
     it('should handle database errors gracefully', async () => {
       // This test will pass once error handling is implemented
       // For now, it should fail since the route doesn't exist
-      const request = createMockRequest({
-        method: 'GET',
-        url: 'http://localhost:3000/api/health',
-      })
 
       // Expect the route to not exist yet (will throw during import)
       expect(async () => {
-        await GET(request)
+        await GET()
       }).rejects.toBeDefined()
     })
   })
 
   describe('Response Format', () => {
     it('should return Content-Type application/json', async () => {
-      const request = createMockRequest({
-        method: 'GET',
-        url: 'http://localhost:3000/api/health',
-      })
+      const response = await GET()
 
-      const response = await GET(request)
-      
       expect(response.headers.get('content-type')).toContain('application/json')
     })
 
     it('should not include sensitive information', async () => {
-      const request = createMockRequest({
-        method: 'GET',
-        url: 'http://localhost:3000/api/health',
-      })
-
-      const response = await GET(request)
+      const response = await GET()
       const result = await extractResponseData(response)
 
       // Should not expose database connection strings, internal paths, etc.
@@ -105,13 +81,8 @@ describe('GET /api/health', () => {
 
   describe('Performance Requirements', () => {
     it('should respond within 1 second', async () => {
-      const request = createMockRequest({
-        method: 'GET',
-        url: 'http://localhost:3000/api/health',
-      })
-
       const startTime = Date.now()
-      const response = await GET(request)
+      const response = await GET()
       const endTime = Date.now()
 
       // Health check should be fast
@@ -121,13 +92,8 @@ describe('GET /api/health', () => {
 
     it('should not perform heavy operations', async () => {
       // Health check should be lightweight - just a simple database ping
-      const request = createMockRequest({
-        method: 'GET',
-        url: 'http://localhost:3000/api/health',
-      })
-
       const startTime = Date.now()
-      await GET(request)
+      await GET()
       const endTime = Date.now()
 
       // Should complete very quickly (under 100ms typically)
@@ -138,17 +104,17 @@ describe('GET /api/health', () => {
   describe('Reliability', () => {
     it('should handle concurrent health checks', async () => {
       // Create multiple concurrent requests
-      const requests = Array(5).fill(null).map(() => 
-        createMockRequest({
-          method: 'GET',
-          url: 'http://localhost:3000/api/health',
-        })
-      )
+      const requests = Array(5)
+        .fill(null)
+        .map(() =>
+          createMockRequest({
+            method: 'GET',
+            url: 'http://localhost:3000/api/health',
+          })
+        )
 
       // Execute all requests concurrently
-      const responses = await Promise.all(
-        requests.map(request => GET(request))
-      )
+      const responses = await Promise.all(requests.map(_request => GET()))
 
       // All should respond successfully
       for (const response of responses) {
@@ -158,24 +124,11 @@ describe('GET /api/health', () => {
     })
 
     it('should provide consistent response format across calls', async () => {
-      const request1 = createMockRequest({
-        method: 'GET',
-        url: 'http://localhost:3000/api/health',
-      })
-
-      const request2 = createMockRequest({
-        method: 'GET',
-        url: 'http://localhost:3000/api/health',
-      })
-
-      const [response1, response2] = await Promise.all([
-        GET(request1),
-        GET(request2)
-      ])
+      const [response1, response2] = await Promise.all([GET(), GET()])
 
       const [result1, result2] = await Promise.all([
         extractResponseData(response1),
-        extractResponseData(response2)
+        extractResponseData(response2),
       ])
 
       // Both should have same structure
@@ -187,13 +140,6 @@ describe('GET /api/health', () => {
 
   describe('HTTP Method Support', () => {
     it('should only support GET method', async () => {
-      // POST should not be allowed
-      const postRequest = createMockRequest({
-        method: 'POST',
-        url: 'http://localhost:3000/api/health',
-        body: {},
-      })
-
       try {
         // This should either throw or return method not allowed
         const response = await fetch('http://localhost:3000/api/health', {
@@ -209,32 +155,22 @@ describe('GET /api/health', () => {
 
   describe('Monitoring Integration', () => {
     it('should provide machine-readable status', async () => {
-      const request = createMockRequest({
-        method: 'GET',
-        url: 'http://localhost:3000/api/health',
-      })
-
-      const response = await GET(request)
+      const response = await GET()
       const result = await extractResponseData(response)
 
       // Status should be one of the expected values for monitoring
       expect(['healthy', 'unhealthy']).toContain(result.data.status)
-      
+
       // Database status should also be clear
       expect(['healthy', 'unhealthy']).toContain(result.data.database)
     })
 
     it('should be suitable for load balancer health checks', async () => {
-      const request = createMockRequest({
-        method: 'GET',
-        url: 'http://localhost:3000/api/health',
-      })
+      const response = await GET()
 
-      const response = await GET(request)
-      
       // Should return proper HTTP status codes that load balancers understand
       expect([200, 503]).toContain(response.status)
-      
+
       // Response should be small and fast
       const contentLength = response.headers.get('content-length')
       if (contentLength) {

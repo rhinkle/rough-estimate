@@ -29,52 +29,52 @@
 
 ## Phase 3.1: Project Setup
 
-- [ ] **T001** Initialize Next.js 14 project with TypeScript and App Router in `src/`
-- [ ] **T002** [P] Configure Tailwind CSS with custom theme and component utilities
-- [ ] **T003** [P] Set up Prisma ORM with SQLite database configuration
-- [ ] **T004** [P] Configure ESLint, Prettier, and TypeScript strict settings
-- [ ] **T005** [P] Set up testing environment (Jest, React Testing Library, Playwright)
-- [ ] **T006** Create Prisma schema with TaskType, Project, ProjectTask, Configuration models in `prisma/schema.prisma`
-- [ ] **T007** Generate Prisma client and run initial database migration
-- [ ] **T008** [P] Create database seed script with default task types in `prisma/seed.ts`
+- [x] **T001** Initialize Next.js 14 project with TypeScript and App Router in `src/`
+- [x] **T002** [P] Configure Tailwind CSS with custom theme and component utilities
+- [x] **T003** [P] Set up Prisma ORM with SQLite database configuration
+- [x] **T004** [P] Configure ESLint, Prettier, and TypeScript strict settings
+- [x] **T005** [P] Set up testing environment (Jest, React Testing Library, Playwright)
+- [x] **T006** Create Prisma schema with TaskType, Project, ProjectTask, Configuration models in `prisma/schema.prisma`
+- [x] **T007** Generate Prisma client and run initial database migration
+- [x] **T008** [P] Create database seed script with default task types in `prisma/seed.ts`
 
 ## Phase 3.2: Tests First (TDD) ⚠️ MUST COMPLETE BEFORE 3.3
 
 **CRITICAL: These tests MUST be written and MUST FAIL before ANY implementation**
 
 ### API Contract Tests (Parallel)
-- [ ] **T009** [P] Contract test GET /api/task-types in `tests/contract/task-types-get.test.ts`
-- [ ] **T010** [P] Contract test POST /api/task-types in `tests/contract/task-types-post.test.ts`
-- [ ] **T011** [P] Contract test PUT /api/task-types/[id] in `tests/contract/task-types-put.test.ts`
-- [ ] **T012** [P] Contract test GET /api/projects in `tests/contract/projects-get.test.ts`
-- [ ] **T013** [P] Contract test POST /api/projects in `tests/contract/projects-post.test.ts`
-- [ ] **T014** [P] Contract test GET /api/projects/[id] in `tests/contract/projects-detail.test.ts`
-- [ ] **T015** [P] Contract test POST /api/projects/[id]/tasks in `tests/contract/project-tasks-post.test.ts`
-- [ ] **T016** [P] Contract test GET /api/projects/[id]/estimate in `tests/contract/project-estimate.test.ts`
-- [ ] **T017** [P] Contract test GET /api/health in `tests/contract/health.test.ts`
+- [x] **T009** [P] Contract test GET /api/task-types in `tests/contract/task-types-get.test.ts`
+- [x] **T010** [P] Contract test POST /api/task-types in `tests/contract/task-types-post.test.ts`
+- [x] **T011** [P] Contract test PUT /api/task-types/[id] in `tests/contract/task-types-put.test.ts`
+- [x] **T012** [P] Contract test GET /api/projects in `tests/contract/projects-get.test.ts`
+- [x] **T013** [P] Contract test POST /api/projects in `tests/contract/projects-post.test.ts`
+- [x] **T014** [P] Contract test GET /api/projects/[id] in `tests/contract/projects-detail.test.ts`
+- [x] **T015** [P] Contract test POST /api/projects/[id]/tasks in `tests/contract/project-tasks-post.test.ts`
+- [x] **T016** [P] Contract test GET /api/projects/[id]/estimate in `tests/contract/project-estimate.test.ts`
+- [x] **T017** [P] Contract test GET /api/health in `tests/contract/health.test.ts`
 
 ### Integration Tests (Parallel)
-- [ ] **T018** [P] Integration test "Create project with task estimates" in `tests/integration/project-creation.test.ts`
-- [ ] **T019** [P] Integration test "Configure task type estimates" in `tests/integration/task-configuration.test.ts`
-- [ ] **T020** [P] Integration test "Calculate project totals" in `tests/integration/estimation-calculation.test.ts`
-- [ ] **T021** [P] Database connection and health check integration test in `tests/integration/database.test.ts`
+- [x] **T018** [P] Integration test "Create project with task estimates" in `tests/integration/project-creation.test.ts`
+- [x] **T019** [P] Integration test "Configure task type estimates" in `tests/integration/task-configuration.test.ts`
+- [x] **T020** [P] Integration test "Calculate project totals" in `tests/integration/estimation-calculation.test.ts`
+- [x] **T021** [P] Database connection and health check integration test in `tests/integration/database.test.ts`
 
 ## Phase 3.3: Core Implementation (ONLY after tests are failing)
 
 ### Database Layer (Parallel)
-- [ ] **T022** [P] Database connection singleton in `src/lib/db.ts`
-- [ ] **T023** [P] Estimation engine library with CLI in `src/lib/estimation-engine/index.ts`
-- [ ] **T024** [P] Task configuration library with CLI in `src/lib/task-config/index.ts`
+- [x] **T022** [P] Database connection singleton in `src/lib/db.ts`
+- [x] **T023** [P] Estimation engine library with CLI in `src/lib/estimation-engine/index.ts`
+- [x] **T024** [P] Task configuration library with CLI in `src/lib/task-config/index.ts`
 
 ### API Routes (Sequential - shared Next.js routing)
-- [ ] **T025** Health check endpoint at `src/app/api/health/route.ts`
-- [ ] **T026** Task types CRUD endpoints at `src/app/api/task-types/route.ts` and `src/app/api/task-types/[id]/route.ts`
-- [ ] **T027** Projects CRUD endpoints at `src/app/api/projects/route.ts` and `src/app/api/projects/[id]/route.ts`
-- [ ] **T028** Project tasks endpoints at `src/app/api/projects/[id]/tasks/route.ts`
-- [ ] **T029** Project estimation endpoint at `src/app/api/projects/[id]/estimate/route.ts`
+- [x] **T025** Health check endpoint at `src/app/api/health/route.ts`
+- [x] **T026** Task types CRUD endpoints at `src/app/api/task-types/route.ts` and `src/app/api/task-types/[id]/route.ts`
+- [x] **T027** Projects CRUD endpoints at `src/app/api/projects/route.ts` and `src/app/api/projects/[id]/route.ts`
+- [x] **T028** Project tasks endpoints at `src/app/api/projects/[id]/tasks/route.ts`
+- [x] **T029** Project estimation endpoint at `src/app/api/projects/[id]/estimate/route.ts`
 
 ### Frontend Components (Parallel)
-- [ ] **T030** [P] Base UI components (Button, Input, Card, Dialog) in `src/components/ui/`
+- [x] **T030** [P] Base UI components (Button, Input, Card, Dialog) in `src/components/ui/`
 - [ ] **T031** [P] Project list and project card components in `src/components/features/projects/`
 - [ ] **T032** [P] Task selector and estimation form components in `src/components/features/estimation/`
 - [ ] **T033** [P] Task configuration components in `src/components/features/configuration/`

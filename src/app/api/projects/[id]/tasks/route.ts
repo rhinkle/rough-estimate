@@ -16,7 +16,7 @@ export async function GET(
         { taskType: { name: 'asc' } },
       ],
     })
-    
+
     return NextResponse.json(tasks)
   } catch (error) {
     return NextResponse.json(
@@ -33,7 +33,7 @@ export async function POST(
   try {
     const body = await request.json()
     const { taskTypeId, quantity, customMinHours, customMaxHours } = body
-    
+
     if (!taskTypeId || typeof taskTypeId !== 'string') {
       return NextResponse.json(
         { error: 'taskTypeId is required and must be a string' },
@@ -54,10 +54,7 @@ export async function POST(
     })
 
     if (!project) {
-      return NextResponse.json(
-        { error: 'Project not found' },
-        { status: 404 }
-      )
+      return NextResponse.json({ error: 'Project not found' }, { status: 404 })
     }
 
     // Verify task type exists
@@ -86,7 +83,10 @@ export async function POST(
 
       if (maxHours < minHours) {
         return NextResponse.json(
-          { error: 'Custom maximum hours must be greater than or equal to minimum hours' },
+          {
+            error:
+              'Custom maximum hours must be greater than or equal to minimum hours',
+          },
           { status: 400 }
         )
       }
@@ -104,7 +104,7 @@ export async function POST(
         taskType: true,
       },
     })
-    
+
     return NextResponse.json(projectTask, { status: 201 })
   } catch (error) {
     return NextResponse.json(

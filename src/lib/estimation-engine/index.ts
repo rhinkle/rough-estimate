@@ -39,9 +39,11 @@ export class EstimationEngine {
 
     // Calculate breakdown for each task
     for (const projectTask of project.tasks) {
-      const minHours = projectTask.customMinHours ?? projectTask.taskType.defaultMinHours
-      const maxHours = projectTask.customMaxHours ?? projectTask.taskType.defaultMaxHours
-      
+      const minHours =
+        projectTask.customMinHours ?? projectTask.taskType.defaultMinHours
+      const maxHours =
+        projectTask.customMaxHours ?? projectTask.taskType.defaultMaxHours
+
       const subtotalMinHours = projectTask.quantity * minHours
       const subtotalMaxHours = projectTask.quantity * maxHours
 

@@ -4,7 +4,7 @@ import { taskConfiguration } from '@/lib/task-config'
 export async function GET() {
   try {
     const categories = await taskConfiguration.getTaskTypeCategories()
-    
+
     return NextResponse.json(categories)
   } catch (error) {
     return NextResponse.json(

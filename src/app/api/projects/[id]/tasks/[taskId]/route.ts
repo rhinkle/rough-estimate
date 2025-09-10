@@ -8,10 +8,10 @@ export async function PUT(
   try {
     const body = await request.json()
     const { quantity, customMinHours, customMaxHours } = body
-    
+
     // Get existing task to validate
     const existingTask = await db.projectTask.findUnique({
-      where: { 
+      where: {
         id: params.taskId,
         projectId: params.id,
       },
@@ -48,8 +48,14 @@ export async function PUT(
     }
 
     // Validate custom hours
-    const finalMinHours = updateData.customMinHours ?? existingTask.customMinHours ?? existingTask.taskType.defaultMinHours
-    const finalMaxHours = updateData.customMaxHours ?? existingTask.customMaxHours ?? existingTask.taskType.defaultMaxHours
+    const finalMinHours =
+      updateData.customMinHours ??
+      existingTask.customMinHours ??
+      existingTask.taskType.defaultMinHours
+    const finalMaxHours =
+      updateData.customMaxHours ??
+      existingTask.customMaxHours ??
+      existingTask.taskType.defaultMaxHours
 
     if (finalMinHours <= 0) {
       return NextResponse.json(
@@ -60,13 +66,15 @@ export async function PUT(
 
     if (finalMaxHours < finalMinHours) {
       return NextResponse.json(
-        { error: 'Maximum hours must be greater than or equal to minimum hours' },
+        {
+          error: 'Maximum hours must be greater than or equal to minimum hours',
+        },
         { status: 400 }
       )
     }
 
     const projectTask = await db.projectTask.update({
-      where: { 
+      where: {
         id: params.taskId,
         projectId: params.id,
       },
@@ -75,7 +83,7 @@ export async function PUT(
         taskType: true,
       },
     })
-    
+
     return NextResponse.json(projectTask)
   } catch (error) {
     return NextResponse.json(
@@ -91,15 +99,19 @@ export async function DELETE(
 ) {
   try {
     await db.projectTask.delete({
-      where: { 
+      where: {
         id: params.taskId,
         projectId: params.id,
       },
     })
-    
+
     return NextResponse.json({ success: true }, { status: 204 })
   } catch (error) {
-    const status = error instanceof Error && error.message.includes('Record to delete does not exist') ? 404 : 500
+    const status =
+      error instanceof Error &&
+      error.message.includes('Record to delete does not exist')
+        ? 404
+        : 500
     return NextResponse.json(
       { error: error instanceof Error ? error.message : 'Unknown error' },
       { status }

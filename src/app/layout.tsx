@@ -6,7 +6,8 @@ const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'Rough Estimate - Project Estimation Tool',
-  description: 'A web application for estimating software project timelines using predefined task types and customizable time estimates.',
+  description:
+    'A web application for estimating software project timelines using predefined task types and customizable time estimates.',
 }
 
 export default function RootLayout({

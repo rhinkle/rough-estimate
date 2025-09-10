@@ -1,12 +1,12 @@
 // Project status enum for type safety
 export const ProjectStatus = {
   DRAFT: 'DRAFT',
-  ACTIVE: 'ACTIVE', 
+  ACTIVE: 'ACTIVE',
   COMPLETED: 'COMPLETED',
   ARCHIVED: 'ARCHIVED',
 } as const
 
-export type ProjectStatus = typeof ProjectStatus[keyof typeof ProjectStatus]
+export type ProjectStatus = (typeof ProjectStatus)[keyof typeof ProjectStatus]
 
 // API Response types
 export interface ApiResponse<T> {

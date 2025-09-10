@@ -25,21 +25,18 @@ export class TaskConfiguration {
     active?: boolean
   }): Promise<TaskType[]> {
     const where: any = {}
-    
+
     if (options?.category) {
       where.category = options.category
     }
-    
+
     if (options?.active !== undefined) {
       where.isActive = options.active
     }
 
     return db.taskType.findMany({
       where,
-      orderBy: [
-        { category: 'asc' },
-        { name: 'asc' },
-      ],
+      orderBy: [{ category: 'asc' }, { name: 'asc' }],
     })
   }
 
@@ -58,7 +55,9 @@ export class TaskConfiguration {
   async createTaskType(input: TaskTypeInput): Promise<TaskType> {
     // Validate input
     if (input.defaultMaxHours < input.defaultMinHours) {
-      throw new Error('Maximum hours must be greater than or equal to minimum hours')
+      throw new Error(
+        'Maximum hours must be greater than or equal to minimum hours'
+      )
     }
 
     if (input.defaultMinHours <= 0) {
@@ -72,10 +71,10 @@ export class TaskConfiguration {
     return db.taskType.create({
       data: {
         name: input.name,
-        description: input.description,
+        description: input.description ?? null,
         defaultMinHours: input.defaultMinHours,
         defaultMaxHours: input.defaultMaxHours,
-        category: input.category,
+        category: input.category ?? null,
         isActive: input.isActive ?? true,
       },
     })
@@ -88,11 +87,15 @@ export class TaskConfiguration {
     }
 
     // Validate hours if provided
-    const newMinHours = input.defaultMinHours ?? existingTaskType.defaultMinHours
-    const newMaxHours = input.defaultMaxHours ?? existingTaskType.defaultMaxHours
+    const newMinHours =
+      input.defaultMinHours ?? existingTaskType.defaultMinHours
+    const newMaxHours =
+      input.defaultMaxHours ?? existingTaskType.defaultMaxHours
 
     if (newMaxHours < newMinHours) {
-      throw new Error('Maximum hours must be greater than or equal to minimum hours')
+      throw new Error(
+        'Maximum hours must be greater than or equal to minimum hours'
+      )
     }
 
     if (newMinHours <= 0) {
@@ -117,7 +120,9 @@ export class TaskConfiguration {
     })
 
     if (referencedTasks.length > 0) {
-      throw new Error('Cannot delete task type that is referenced by project tasks')
+      throw new Error(
+        'Cannot delete task type that is referenced by project tasks'
+      )
     }
 
     await db.taskType.delete({
@@ -136,9 +141,7 @@ export class TaskConfiguration {
       orderBy: { category: 'asc' },
     })
 
-    return result
-      .map(item => item.category)
-      .filter(Boolean) as string[]
+    return result.map(item => item.category).filter(Boolean) as string[]
   }
 }
 

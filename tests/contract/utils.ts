@@ -8,14 +8,16 @@ export function createMockRequest(options: {
 }): NextRequest {
   const { method, url, body, headers = {} } = options
   
-  const request = new NextRequest(url, {
+  const requestInit = {
     method,
     headers: {
       'content-type': 'application/json',
       ...headers,
     },
-    body: body ? JSON.stringify(body) : undefined,
-  })
+    ...(body && { body: JSON.stringify(body) }),
+  }
+
+  const request = new NextRequest(url, requestInit)
   
   return request
 }

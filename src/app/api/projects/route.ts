@@ -5,23 +5,20 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
     const status = searchParams.get('status')
-    
+
     const where: any = {}
     if (status) where.status = status
 
     const projects = await db.project.findMany({
       where,
-      orderBy: [
-        { updatedAt: 'desc' },
-        { name: 'asc' },
-      ],
+      orderBy: [{ updatedAt: 'desc' }, { name: 'asc' }],
       include: {
         _count: {
           select: { tasks: true },
         },
       },
     })
-    
+
     return NextResponse.json(projects)
   } catch (error) {
     return NextResponse.json(
@@ -34,9 +31,9 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    
+
     const { name, description, status = 'DRAFT' } = body
-    
+
     if (!name || typeof name !== 'string' || name.trim().length === 0) {
       return NextResponse.json(
         { error: 'Name is required and must be a non-empty string' },
@@ -56,7 +53,7 @@ export async function POST(request: NextRequest) {
         },
       },
     })
-    
+
     return NextResponse.json(project, { status: 201 })
   } catch (error) {
     return NextResponse.json(
