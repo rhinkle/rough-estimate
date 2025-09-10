@@ -75,31 +75,31 @@
 
 ### Frontend Components (Parallel)
 - [x] **T030** [P] Base UI components (Button, Input, Card, Dialog) in `src/components/ui/`
-- [ ] **T031** [P] Project list and project card components in `src/components/features/projects/`
-- [ ] **T032** [P] Task selector and estimation form components in `src/components/features/estimation/`
-- [ ] **T033** [P] Task configuration components in `src/components/features/configuration/`
+- [x] **T031** [P] Project list and project card components in `src/components/features/projects/`
+- [X] **T032** [P] Task selector and estimation form components in `src/components/features/estimation/`
+- [X] **T033** [P] Task configuration components in `src/components/features/configuration/`
 
 ### Application Pages (Sequential - shared layout)
-- [ ] **T034** Root layout with navigation in `src/app/layout.tsx`
-- [ ] **T035** Home page with project overview at `src/app/page.tsx`
-- [ ] **T036** Projects list page at `src/app/projects/page.tsx`
-- [ ] **T037** New project form page at `src/app/projects/new/page.tsx`
-- [ ] **T038** Project detail page at `src/app/projects/[id]/page.tsx`
-- [ ] **T039** Project estimation interface at `src/app/projects/[id]/estimate/page.tsx`
-- [ ] **T040** Task configuration page at `src/app/configuration/page.tsx`
+- [x] **T034** Root layout with navigation in `src/app/layout.tsx`
+- [x] **T035** Home page with project overview at `src/app/page.tsx`
+- [x] **T036** Projects list page at `src/app/projects/page.tsx`
+- [x] **T037** New project form page at `src/app/projects/new/page.tsx`
+- [x] **T038** Project detail page at `src/app/projects/[id]/page.tsx`
+- [x] **T039** Project estimation interface at `src/app/projects/[id]/estimate/page.tsx`
+- [x] **T040** Task configuration page at `src/app/configuration/page.tsx`
 
 ## Phase 3.4: Integration & Error Handling
 
 - [ ] **T041** Input validation with Zod schemas in `src/lib/validations.ts`
-- [ ] **T042** Error boundaries and global error handling in `src/components/error-boundary.tsx`
+- [x] **T042** Error boundaries and global error handling in `src/components/error-boundary.tsx`
 - [ ] **T043** API error responses and logging middleware
 - [ ] **T044** Database transaction handling and connection pooling
-- [ ] **T045** Server Actions for form submissions and optimistic updates
+- [x] **T045** Server Actions for form submissions and optimistic updates
 
 ## Phase 3.5: Polish & Performance
 
-- [ ] **T046** [P] Unit tests for estimation calculations in `tests/unit/estimation-engine.test.ts`
-- [ ] **T047** [P] Unit tests for task configuration logic in `tests/unit/task-config.test.ts`
+- [x] **T046** [P] Unit tests for estimation calculations in `tests/unit/estimation-engine.test.ts`
+- [x] **T047** [P] Unit tests for task configuration logic in `tests/unit/task-config.test.ts`
 - [ ] **T048** [P] Component unit tests for UI components in `tests/unit/components/`
 - [ ] **T049** End-to-end tests for core user flows in `tests/e2e/user-flows.spec.ts`
 - [ ] **T050** [P] Performance optimization: database query optimization and caching

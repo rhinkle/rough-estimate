@@ -49,6 +49,9 @@ export function EstimationBreakdown({
   className,
 }: EstimationBreakdownProps) {
   const formatHours = (hours: number): string => {
+    if (!hours) {
+      return '0'
+    }
     return hours === Math.floor(hours) ? hours.toString() : hours.toFixed(1)
   }
 
@@ -74,7 +77,7 @@ export function EstimationBreakdown({
     }
   }
 
-  if (tasks.length === 0) {
+  if (tasks?.length === 0) {
     return null
   }
 
@@ -94,7 +97,8 @@ export function EstimationBreakdown({
             <div>
               <p className="text-sm font-medium">Total Project Estimate</p>
               <p className="text-xs text-muted-foreground">
-                Based on {tasks.length} task type{tasks.length !== 1 ? 's' : ''}
+                Based on {tasks?.length} task type
+                {tasks?.length !== 1 ? 's' : ''}
               </p>
             </div>
             <div className="text-right">
@@ -123,7 +127,7 @@ export function EstimationBreakdown({
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {tasks.map(task => {
+                {tasks?.map(task => {
                   const breakdown = getTaskBreakdown(task)
 
                   return (
@@ -181,7 +185,7 @@ export function EstimationBreakdown({
                 { min: number; max: number; count: number }
               > = {}
 
-              tasks.forEach(task => {
+              tasks?.forEach(task => {
                 const category = task.taskType.category || 'Other'
                 const breakdown = getTaskBreakdown(task)
 
